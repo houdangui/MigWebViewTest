@@ -51,6 +51,7 @@ public class MainActivityFragment extends Fragment {
                 Message msg = new Message();
                 msg.setWebViewIndex(index);
                 msg.setWebViewkey(WebViewCache.posts[index]);
+                msg.setMsgIndex(i);
                 mDummyMessages.add(msg);
             }
         }

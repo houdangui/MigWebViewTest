@@ -7,6 +7,7 @@ public class Message {
 
     private String webViewkey;
     private int webViewIndex;
+    private int msgIndex;
 
     public String getWebViewkey() {
         return webViewkey;
@@ -22,5 +23,13 @@ public class Message {
 
     public void setWebViewIndex(int webViewIndex) {
         this.webViewIndex = webViewIndex;
+    }
+
+    public int getMsgIndex() {
+        return msgIndex;
+    }
+
+    public void setMsgIndex(int msgIndex) {
+        this.msgIndex = msgIndex;
     }
 }

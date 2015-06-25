@@ -64,7 +64,7 @@ public class MessageListAdapter extends BaseAdapter implements AbsListView.Recyc
 
     @Override
     public void onMovedToScrapHeap(View view) {
-        Object tag = view.getTag();
+        Object tag = view.getTag(R.id.holder);
         //for testing webview
         if (tag != null && tag instanceof MessageViewHolder ) {
             MessageViewHolder holder = (MessageViewHolder) tag;

@@ -2,6 +2,7 @@ package com.projectgoth.migwebviewtest;
 
 import android.graphics.Color;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,7 +40,17 @@ public class MessageViewHolder {
 
         } else {
             container.removeView(webView);
-            container.addView(cachedWebView, webView.getLayoutParams());
+            //create layout params
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.BELOW, R.id.text_embeded_webview);
+            //remove parent view of cached webview
+            RelativeLayout parentView = (RelativeLayout)cachedWebView.getParent();
+            if (parentView != null) {
+                parentView.removeView(cachedWebView);
+            }
+            //add cached webview
+            container.addView(cachedWebView, layoutParams);
 
             WebViewCache.removeWebView(key);
         }

@@ -1,6 +1,7 @@
 package com.projectgoth.migwebviewtest;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -25,12 +26,27 @@ public class MessageViewHolder {
     }
 
     private void setupWebView() {
-        webViewTitle.setText("test web view no. " + message.getWebViewIndex());
+        webViewTitle.setText("msg index:" + message.getMsgIndex() + " webview type:" + message.getWebViewIndex());
 
         String key = message.getWebViewkey();
         WebView cachedWebView = WebViewCache.getWebView(key);
 
+        Log.d("WebinList", "----- setupWebView msg index:" + message.getMsgIndex() + " webview type:" + message.getWebViewIndex());
+
         if (cachedWebView == null) {
+            Log.d("WebinList", "----- web view load");
+            //create layout params
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.BELOW, R.id.text_embeded_webview);
+            if (webView.getParent() != container) {
+                RelativeLayout parentView = (RelativeLayout)webView.getParent();
+                if (parentView != null) {
+                    parentView.removeView(webView);
+                }
+                container.addView(webView, layoutParams);
+            }
+
             webView.getSettings().setDomStorageEnabled(true);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.loadDataWithBaseURL(WebViewCache.baseURl,
@@ -39,6 +55,7 @@ public class MessageViewHolder {
             webView.setBackgroundColor(Color.YELLOW);
 
         } else {
+            Log.d("WebinList", "----- web view add");
             container.removeView(webView);
             //create layout params
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -51,9 +68,26 @@ public class MessageViewHolder {
             }
             //add cached webview
             container.addView(cachedWebView, layoutParams);
+            String logChildrenViews = "";
+            for (int i = 0 ; i < container.getChildCount(); i++) {
+                View childView = container.getChildAt(i);
+                logChildrenViews += childView.getClass().getCanonicalName();
+                if (i != container.getChildCount() - 1) {
+                    logChildrenViews += ";";
+                }
+            }
+            Log.d("WebinList", "----- after adding " + logChildrenViews);
 
             WebViewCache.removeWebView(key);
         }
+
+        container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               RelativeLayout c = container;
+                c.requestLayout();
+            }
+        });
     }
 
     public void setData(Message msg) {
@@ -68,6 +102,10 @@ public class MessageViewHolder {
 
     public WebView getWebView() {
         return webView;
+    }
+
+    public Message getMessage() {
+        return message;
     }
 
 }

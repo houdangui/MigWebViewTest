@@ -1,5 +1,6 @@
 package com.projectgoth.migwebviewtest;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -18,11 +19,17 @@ public class MessageViewHolder {
     private WebView  webView;
 
     private Message message;
+    private Activity context;
+
 
     public MessageViewHolder(View view) {
         container = (RelativeLayout)view.findViewById(R.id.container);
         webViewTitle = (TextView)view.findViewById(R.id.text_embeded_webview);
         webView = (WebView)view.findViewById(R.id.embeded_webview);
+    }
+
+    public void setContext(Activity context) {
+        this.context = context;
     }
 
     private void setupWebView() {
@@ -40,11 +47,17 @@ public class MessageViewHolder {
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(RelativeLayout.BELOW, R.id.text_embeded_webview);
             if (webView.getParent() != container) {
-                RelativeLayout parentView = (RelativeLayout)webView.getParent();
-                if (parentView != null) {
-                    parentView.removeView(webView);
-                }
+
+                webView = new WebView(context);
+
+                String logChildrenViews = getChildViewNames(container);
+                Log.d("WebinList", "----- before adding " + logChildrenViews);
                 container.addView(webView, layoutParams);
+                Log.d("WebinList", "----- after adding " + logChildrenViews);
+                if (container.getChildCount() == 0) {
+                    int i = 0;
+                    i ++;
+                }
             }
 
             webView.getSettings().setDomStorageEnabled(true);
@@ -56,7 +69,8 @@ public class MessageViewHolder {
 
         } else {
             Log.d("WebinList", "----- web view add");
-            container.removeView(webView);
+            removeWebViewInChild(container);
+
             //create layout params
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -68,14 +82,7 @@ public class MessageViewHolder {
             }
             //add cached webview
             container.addView(cachedWebView, layoutParams);
-            String logChildrenViews = "";
-            for (int i = 0 ; i < container.getChildCount(); i++) {
-                View childView = container.getChildAt(i);
-                logChildrenViews += childView.getClass().getCanonicalName();
-                if (i != container.getChildCount() - 1) {
-                    logChildrenViews += ";";
-                }
-            }
+            String logChildrenViews = getChildViewNames(container);
             Log.d("WebinList", "----- after adding " + logChildrenViews);
 
             WebViewCache.removeWebView(key);
@@ -88,6 +95,27 @@ public class MessageViewHolder {
                 c.requestLayout();
             }
         });
+    }
+
+    public String getChildViewNames(RelativeLayout container) {
+        String logChildrenViews = "";
+        for (int i = 0 ; i < container.getChildCount(); i++) {
+            View childView = container.getChildAt(i);
+            logChildrenViews += childView.getClass().getSimpleName();
+            if (i != container.getChildCount() - 1) {
+                logChildrenViews += ";";
+            }
+        }
+        return logChildrenViews;
+    }
+
+    public void removeWebViewInChild(RelativeLayout container) {
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View childView = container.getChildAt(i);
+            if(childView instanceof WebView) {
+                container.removeView(childView);
+            }
+        }
     }
 
     public void setData(Message msg) {

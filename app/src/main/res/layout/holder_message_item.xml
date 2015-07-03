@@ -12,11 +12,4 @@
         android:layout_height="wrap_content"
         android:textColor="#FF0000FF"/>
 
-    <WebView
-        android:id="@+id/embeded_webview"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text_embeded_webview"/>
-    />
-
 </RelativeLayout>

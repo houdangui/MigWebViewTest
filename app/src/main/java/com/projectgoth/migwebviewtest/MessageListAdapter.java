@@ -1,6 +1,7 @@
 package com.projectgoth.migwebviewtest;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 /**
  * Created by houdangui on 23/6/15.
  */
-public class MessageListAdapter extends BaseAdapter implements AbsListView.RecyclerListener {
+public class MessageListAdapter extends BaseAdapter {
 
     private ArrayList<Message> msgDataList = new ArrayList<>();
     private LayoutInflater mInflater;
@@ -52,7 +53,10 @@ public class MessageListAdapter extends BaseAdapter implements AbsListView.Recyc
             viewHolder = (MessageViewHolder)convertView.getTag(R.id.holder);
         }
 
+        //Log.d("WebinList", "MessageListAdapter.getView pos:" + position);
+
         Message msg = (Message)getItem(position);
+        viewHolder.setContext(mActivity);
         viewHolder.setData(msg);
 
         return convertView;
@@ -62,15 +66,4 @@ public class MessageListAdapter extends BaseAdapter implements AbsListView.Recyc
         this.msgDataList = msgDataList;
     }
 
-    @Override
-    public void onMovedToScrapHeap(View view) {
-        Object tag = view.getTag(R.id.holder);
-        //for testing webview
-        if (tag != null && tag instanceof MessageViewHolder ) {
-            MessageViewHolder holder = (MessageViewHolder) tag;
-            String key = holder.getKey();
-            WebView webView = holder.getWebView();
-            WebViewCache.addWebView(key, webView);
-        }
-    }
 }

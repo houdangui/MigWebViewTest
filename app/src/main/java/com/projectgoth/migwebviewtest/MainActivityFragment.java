@@ -1,10 +1,15 @@
 package com.projectgoth.migwebviewtest;
 
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.webkit.WebView;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import java.lang.reflect.Array;
@@ -15,7 +20,7 @@ import java.util.Random;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements AbsListView.RecyclerListener, ViewTreeObserver.OnGlobalLayoutListener {
 
     private ListView mMessageList;
     private MessageListAdapter mMessageListAdapter;
@@ -37,9 +42,11 @@ public class MainActivityFragment extends Fragment {
 
         mMessageList = (ListView) view.findViewById(R.id.message_list);
         mMessageListAdapter = new MessageListAdapter(getActivity());
-        mMessageList.setRecyclerListener(mMessageListAdapter);
+        mMessageList.setRecyclerListener(this);
         mMessageListAdapter.setMsgDataList(getDummyMessages());
         mMessageList.setAdapter(mMessageListAdapter);
+        mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
+
     }
 
 
@@ -57,5 +64,53 @@ public class MainActivityFragment extends Fragment {
         }
 
         return mDummyMessages;
+    }
+
+    @Override
+    public void onMovedToScrapHeap(View view) {
+        Object tag = view.getTag(R.id.holder);
+        Log.d("WebinList", "onMovedToScrapHeap");
+
+        if (!isLayoutInitialized) {
+            return;
+        }
+        //for testing webview
+        if (tag != null && tag instanceof MessageViewHolder ) {
+            MessageViewHolder holder = (MessageViewHolder) tag;
+            String key = holder.getKey();
+            WebView webView = holder.getWebView();
+            Message message = holder.getMessage();
+            Log.d("WebinList", "onMovedToScrapHeap msg index:" + message.getMsgIndex() + (webView == null ? "" : " webview type:" + webView.getTag()));
+            if (!isMessageVisible(message) && webView != null) {
+                Log.d("WebinList", "cacheWebView type " + message.getWebViewIndex());
+                WebViewCache.addWebView(key, webView);
+            }
+        }
+    }
+
+    private boolean isMessageVisible(Message message) {
+        int firstVisiblePos = mMessageList.getFirstVisiblePosition();
+        int lastVisiblePos = mMessageList.getLastVisiblePosition();
+        if (message.getMsgIndex() >= firstVisiblePos && message.getMsgIndex() <= lastVisiblePos ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean isLayoutInitialized = false;
+    @Override
+    public void onGlobalLayout() {
+        isLayoutInitialized = true;
+
+        if (hasJellyBean()) {
+            mMessageList.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        } else {
+            mMessageList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        }
+    }
+
+    public static boolean hasJellyBean() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 }

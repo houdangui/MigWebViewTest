@@ -80,7 +80,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
             String key = holder.getKey();
             WebView webView = holder.getWebView();
             Message message = holder.getMessage();
-            Log.d("WebinList", "onMovedToScrapHeap msg type:" + message.getMsgIndex() + (webView == null ? "" : " webview type:" + webView.getTag()));
+            Log.d("WebinList", "onMovedToScrapHeap msg index:" + message.getMsgIndex() + (webView == null ? "" : " webview type:" + webView.getTag()));
             if (!isMessageVisible(message) && webView != null) {
                 Log.d("WebinList", "cacheWebView type " + message.getWebViewIndex());
                 WebViewCache.addWebView(key, webView);

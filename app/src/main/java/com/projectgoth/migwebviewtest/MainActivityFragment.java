@@ -69,7 +69,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
     @Override
     public void onMovedToScrapHeap(View view) {
         Object tag = view.getTag(R.id.holder);
-        Log.d("WebinList", "onMovedToScrapHeap " + view);
+        Log.d("WebinList", "onMovedToScrapHeap");
 
         if (!isLayoutInitialized) {
             return;
@@ -80,7 +80,8 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
             String key = holder.getKey();
             WebView webView = holder.getWebView();
             Message message = holder.getMessage();
-            if (!isMessageVisible(message)) {
+            Log.d("WebinList", "onMovedToScrapHeap msg type:" + message.getMsgIndex() + (webView == null ? "" : " webview type:" + webView.getTag()));
+            if (!isMessageVisible(message) && webView != null) {
                 Log.d("WebinList", "cacheWebView type " + message.getWebViewIndex());
                 WebViewCache.addWebView(key, webView);
             }

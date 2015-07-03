@@ -40,8 +40,6 @@ public class MessageViewHolder {
         Log.d("WebinList", "----- setupWebView msg index:" + message.getMsgIndex() + " webview type:" + message.getWebViewIndex());
 
         if (cachedWebView == null) {
-            Log.d("WebinList", "----- new web view & load");
-
             removeWebViewInChild(container);
 
             //create layout params
@@ -49,6 +47,7 @@ public class MessageViewHolder {
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(RelativeLayout.BELOW, R.id.text_embeded_webview);
 
+            Log.d("WebinList", "----- new web view & load");
             webView = new WebView(context);
 
             //Log.d("WebinList", "----- before adding " + logChildrenViews);
@@ -65,7 +64,7 @@ public class MessageViewHolder {
             webView.setTag(message.getWebViewIndex());
 
         } else {
-            Log.d("WebinList", "----- add cached web view");
+
             removeWebViewInChild(container);
 
             //create layout params
@@ -75,9 +74,13 @@ public class MessageViewHolder {
             //remove parent view of cached webview
             RelativeLayout parentView = (RelativeLayout)cachedWebView.getParent();
             if (parentView != null) {
+                MessageViewHolder holder = (MessageViewHolder) parentView.getTag(R.id.holder);
+                Message message = holder.getMessage();
+                Log.d("WebinList", "**** remove webview type:" + message.getWebViewIndex() + " from msg:" + message.getMsgIndex());
                 parentView.removeView(cachedWebView);
             }
             //add cached webview
+            Log.d("WebinList", "----- add cached web view");
             container.addView(cachedWebView, layoutParams);
             String logChildrenViews = getChildViewNames(container);
             //Log.d("WebinList", "----- after adding " + logChildrenViews);
@@ -112,7 +115,7 @@ public class MessageViewHolder {
             if(childView instanceof WebView) {
                 MessageViewHolder holder = (MessageViewHolder) container.getTag(R.id.holder);
                 Message message = holder.getMessage();
-                Log.d("WebinList", "**** remove webview type:" + message.getWebViewIndex() + " from msg:" + message.getMsgIndex());
+                //Log.d("WebinList", "**** remove webview type:" + message.getWebViewIndex() + " from msg:" + message.getMsgIndex());
                 container.removeView(childView);
             }
         }

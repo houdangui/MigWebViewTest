@@ -12,7 +12,6 @@ import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -43,7 +42,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         mMessageList = (ListView) view.findViewById(R.id.message_list);
         mMessageListAdapter = new MessageListAdapter(getActivity());
         mMessageList.setRecyclerListener(this);
-        mMessageListAdapter.setMsgDataList(getDummyMessages2());
+        mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
         mMessageList.setAdapter(mMessageListAdapter);
         mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
@@ -66,7 +65,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         return mDummyMessages;
     }
 
-    private ArrayList<Message> getDummyMessages2() {
+    private ArrayList<Message> getDummyMsgsWithLessWebView() {
         if (mDummyMessages == null) {
             mDummyMessages = new ArrayList<>();
             for (int i=0; i<MSG_NUM; i++) {
@@ -77,15 +76,15 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
                 mDummyMessages.add(msg);
             }
 
-            int webViewIndex = 0;
+            int webViewIndex = 4;
 
-            Message msg1 = mDummyMessages.get(1);
+            /*Message msg1 = mDummyMessages.get(1);
             msg1.setWebViewIndex(webViewIndex);
-            msg1.setWebViewkey(WebViewCache.posts[webViewIndex]);
+            msg1.setWebViewkey(WebViewCache.posts[webViewIndex]);*/
 
-            Message msg7 = mDummyMessages.get(7);
-            msg7.setWebViewIndex(webViewIndex);
-            msg7.setWebViewkey(WebViewCache.posts[webViewIndex]);
+            Message msg10 = mDummyMessages.get(10);
+            msg10.setWebViewIndex(webViewIndex);
+            msg10.setWebViewkey(WebViewCache.posts[webViewIndex]);
 
         }
 
@@ -111,8 +110,8 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
             WebView webView = holder.getWebView();
             Message message = holder.getMessage();
             Log.d("WebinList", "onMovedToScrapHeap msg index:" + message.getMsgIndex() + (webView == null ? "" : " webview type:" + webView.getTag()));
-            if (!isMessageVisible(message) && webView != null) {
-                Log.d("WebinList", "cacheWebView type " + message.getWebViewIndex());
+            if (webView != null) {
+                Log.d("WebinList", "***** cacheWebView type " + message.getWebViewIndex());
                 WebViewCache.addWebView(key, webView);
             }
         }

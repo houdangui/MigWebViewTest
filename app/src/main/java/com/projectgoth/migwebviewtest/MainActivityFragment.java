@@ -12,7 +12,6 @@ import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -43,7 +42,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         mMessageList = (ListView) view.findViewById(R.id.message_list);
         mMessageListAdapter = new MessageListAdapter(getActivity());
         mMessageList.setRecyclerListener(this);
-        mMessageListAdapter.setMsgDataList(getDummyMessages());
+        mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
         mMessageList.setAdapter(mMessageListAdapter);
         mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
@@ -66,6 +65,32 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         return mDummyMessages;
     }
 
+    private ArrayList<Message> getDummyMsgsWithLessWebView() {
+        if (mDummyMessages == null) {
+            mDummyMessages = new ArrayList<>();
+            for (int i=0; i<MSG_NUM; i++) {
+                Message msg = new Message();
+                msg.setMsgIndex(i);
+                msg.setWebViewIndex(-1);
+                msg.setWebViewkey(null);
+                mDummyMessages.add(msg);
+            }
+
+            int webViewIndex = 4;
+
+            /*Message msg1 = mDummyMessages.get(1);
+            msg1.setWebViewIndex(webViewIndex);
+            msg1.setWebViewkey(WebViewCache.posts[webViewIndex]);*/
+
+            Message msg10 = mDummyMessages.get(10);
+            msg10.setWebViewIndex(webViewIndex);
+            msg10.setWebViewkey(WebViewCache.posts[webViewIndex]);
+
+        }
+
+        return mDummyMessages;
+    }
+
     @Override
     public void onMovedToScrapHeap(View view) {
         Object tag = view.getTag(R.id.holder);
@@ -78,11 +103,15 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         if (tag != null && tag instanceof MessageViewHolder ) {
             MessageViewHolder holder = (MessageViewHolder) tag;
             String key = holder.getKey();
+            if (key == null) {
+                return;
+            }
+
             WebView webView = holder.getWebView();
             Message message = holder.getMessage();
             Log.d("WebinList", "onMovedToScrapHeap msg index:" + message.getMsgIndex() + (webView == null ? "" : " webview type:" + webView.getTag()));
-            if (!isMessageVisible(message) && webView != null) {
-                Log.d("WebinList", "cacheWebView type " + message.getWebViewIndex());
+            if (webView != null) {
+                Log.d("WebinList", "***** cacheWebView type " + message.getWebViewIndex());
                 WebViewCache.addWebView(key, webView);
             }
         }

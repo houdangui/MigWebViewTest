@@ -32,6 +32,12 @@ public class MessageViewHolder {
     }
 
     private void setupWebView() {
+        if (message.getWebViewkey() == null) {
+            webViewTitle.setText("msg index:" + message.getMsgIndex() + " webview type: null");
+            removeWebViewInChild(container);
+            return;
+        }
+
         webViewTitle.setText("msg index:" + message.getMsgIndex() + " webview type:" + message.getWebViewIndex());
 
         String key = message.getWebViewkey();

@@ -53,7 +53,7 @@ public class MessageListAdapter extends BaseAdapter {
             viewHolder = (MessageViewHolder)convertView.getTag(R.id.holder);
         }
 
-        //Log.d("WebinList", "MessageListAdapter.getView pos:" + position);
+        Log.d("WebinList", "MessageListAdapter.getView pos:" + position);
 
         Message msg = (Message)getItem(position);
         viewHolder.setContext(mActivity);

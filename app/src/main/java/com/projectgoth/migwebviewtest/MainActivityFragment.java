@@ -8,9 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.webkit.WebView;
 import android.widget.AbsListView;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -42,7 +40,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         mMessageList = (MyListView) view.findViewById(R.id.message_list);
         mMessageListAdapter = new MessageListAdapter(getActivity());
         mMessageList.setRecyclerListener(this);
-        mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
+        mMessageListAdapter.setMsgDataList(getDummyMessages());
         mMessageList.setAdapter(mMessageListAdapter);
         mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
@@ -112,7 +110,13 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
             Message message = holder.getMessage();
             Log.d("WebinList", "onMovedToScrapHeap msg index:" + message.getMsgIndex() + (webView == null ? "" : " webview type:" + webView.getTag()));
             if (webView != null) {
-                Log.d("WebinList", "***** cacheWebView type " + message.getWebViewIndex());
+                Log.d("WebinList", "***** cacheWebView type " + message.getWebViewType());
+
+                int type = (Integer)webView.getTag();
+                String myKey = WebViewCache.posts[type];
+                if (!myKey.equals(key)) {
+                    Log.d("WebinList", "!!!!!!!" + "key:" + key + " myKey:" + myKey);
+                }
                 WebViewCache.addWebView(key, webView);
             }
         }

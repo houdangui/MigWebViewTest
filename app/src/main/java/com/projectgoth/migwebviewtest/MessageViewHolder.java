@@ -41,12 +41,12 @@ public class MessageViewHolder {
             return;
         }
 
-        webViewTitle.setText("msg index:" + message.getMsgIndex() + " webview type:" + message.getWebViewIndex());
+        webViewTitle.setText("msg index:" + message.getMsgIndex() + " webview type:" + message.getWebViewType());
 
         String key = message.getWebViewkey();
         MyWebView cachedWebView = WebViewCache.getWebView(key);
 
-        Log.d("WebinList", "----- setupWebView msg index:" + message.getMsgIndex() + " webview type:" + message.getWebViewIndex());
+        Log.d("WebinList", "----- setupWebView msg index:" + message.getMsgIndex() + " webview type:" + message.getWebViewType());
 
         if (cachedWebView == null) {
             removeWebViewInChild(container);
@@ -70,7 +70,7 @@ public class MessageViewHolder {
                     key,
                     "text/html", "UTF-8", null);
             webView.setBackgroundColor(Color.YELLOW);
-            webView.setTag(message.getWebViewIndex());
+            webView.setTag(message.getWebViewType());
 
             webView.setWebViewClient(new WebViewClient(){
                 @Override
@@ -79,7 +79,7 @@ public class MessageViewHolder {
                     //int measuredHeight = view.getMeasuredHeight();
                     //int height = view.getHeight();
                     int scrollRange = ((MyWebView)view).getVerticalScrollRange();
-                    Log.d("WebinList", "WebView:" + message.getWebViewIndex() +
+                    Log.d("WebinList", "WebView:" + message.getWebViewType() +
                             " scrollRange:" + scrollRange);
                 }
             });
@@ -98,7 +98,7 @@ public class MessageViewHolder {
             if (parentView != null) {
                 MessageViewHolder holder = (MessageViewHolder) parentView.getTag(R.id.holder);
                 Message message = holder.getMessage();
-                Log.d("WebinList", "**** remove webview type:" + message.getWebViewIndex() + " from msg:" + message.getMsgIndex());
+                Log.d("WebinList", "**** remove webview type:" + message.getWebViewType() + " from msg:" + message.getMsgIndex());
                 parentView.removeView(cachedWebView);
             }
             //add cached webview
@@ -137,7 +137,7 @@ public class MessageViewHolder {
             if(childView instanceof MyWebView) {
                 MessageViewHolder holder = (MessageViewHolder) container.getTag(R.id.holder);
                 Message message = holder.getMessage();
-                //Log.d("WebinList", "**** remove webview type:" + message.getWebViewIndex() + " from msg:" + message.getMsgIndex());
+                //Log.d("WebinList", "**** remove webview type:" + message.getWebViewType() + " from msg:" + message.getMsgIndex());
                 container.removeView(childView);
             }
         }

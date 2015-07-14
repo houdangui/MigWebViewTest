@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,10 +17,12 @@ public class MessageViewHolder {
 
     private RelativeLayout container;
     private TextView webViewTitle;
-    private WebView  webView;
+    private MyWebView  webView;
 
     private Message message;
     private Activity context;
+
+    static private final int WEB_VIEW_FIXED_HEIGHT = 400;
 
 
     public MessageViewHolder(View view) {
@@ -41,7 +44,7 @@ public class MessageViewHolder {
         webViewTitle.setText("msg index:" + message.getMsgIndex() + " webview type:" + message.getWebViewIndex());
 
         String key = message.getWebViewkey();
-        WebView cachedWebView = WebViewCache.getWebView(key);
+        MyWebView cachedWebView = WebViewCache.getWebView(key);
 
         Log.d("WebinList", "----- setupWebView msg index:" + message.getMsgIndex() + " webview type:" + message.getWebViewIndex());
 
@@ -50,11 +53,11 @@ public class MessageViewHolder {
 
             //create layout params
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    ViewGroup.LayoutParams.MATCH_PARENT, WEB_VIEW_FIXED_HEIGHT);
             layoutParams.addRule(RelativeLayout.BELOW, R.id.text_embeded_webview);
 
             Log.d("WebinList", "----- new web view & load");
-            webView = new WebView(context);
+            webView = new MyWebView(context);
 
             //Log.d("WebinList", "----- before adding " + logChildrenViews);
             container.addView(webView, layoutParams);
@@ -69,13 +72,26 @@ public class MessageViewHolder {
             webView.setBackgroundColor(Color.YELLOW);
             webView.setTag(message.getWebViewIndex());
 
+            webView.setWebViewClient(new WebViewClient(){
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(view, url);
+                    //int measuredHeight = view.getMeasuredHeight();
+                    //int height = view.getHeight();
+                    int scrollRange = ((MyWebView)view).getVerticalScrollRange();
+                    Log.d("WebinList", "WebView:" + message.getWebViewIndex() +
+                            " scrollRange:" + scrollRange);
+                }
+            });
+
         } else {
 
             removeWebViewInChild(container);
+            cachedWebView.setWebViewClient(null);
 
             //create layout params
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    ViewGroup.LayoutParams.MATCH_PARENT, WEB_VIEW_FIXED_HEIGHT);
             layoutParams.addRule(RelativeLayout.BELOW, R.id.text_embeded_webview);
             //remove parent view of cached webview
             RelativeLayout parentView = (RelativeLayout)cachedWebView.getParent();
@@ -86,7 +102,7 @@ public class MessageViewHolder {
                 parentView.removeView(cachedWebView);
             }
             //add cached webview
-            Log.d("WebinList", "----- add cached web view");
+            Log.d("WebinList", "----- add cached web view: " + cachedWebView.getTag());
             container.addView(cachedWebView, layoutParams);
             String logChildrenViews = getChildViewNames(container);
             //Log.d("WebinList", "----- after adding " + logChildrenViews);
@@ -118,7 +134,7 @@ public class MessageViewHolder {
     public void removeWebViewInChild(RelativeLayout container) {
         for (int i = 0; i < container.getChildCount(); i++) {
             View childView = container.getChildAt(i);
-            if(childView instanceof WebView) {
+            if(childView instanceof MyWebView) {
                 MessageViewHolder holder = (MessageViewHolder) container.getTag(R.id.holder);
                 Message message = holder.getMessage();
                 //Log.d("WebinList", "**** remove webview type:" + message.getWebViewIndex() + " from msg:" + message.getMsgIndex());
@@ -137,7 +153,7 @@ public class MessageViewHolder {
         return message.getWebViewkey();
     }
 
-    public WebView getWebView() {
+    public MyWebView getWebView() {
         return webView;
     }
 

@@ -1,7 +1,6 @@
 package com.projectgoth.migwebviewtest;
 
 import android.support.v4.util.LruCache;
-import android.webkit.WebView;
 
 /**
  * Created by houdangui on 23/6/15.
@@ -30,14 +29,14 @@ public class WebViewCache {
 
     private static final int MAX_CACHE_SIZE = 10;
 
-    private static LruCache<String, WebView> webViewCache = new LruCache<String, WebView>(MAX_CACHE_SIZE);
+    private static LruCache<String, MyWebView> webViewCache = new LruCache<String, MyWebView>(MAX_CACHE_SIZE);
 
-    public static void addWebView(String key, WebView webView) {
+    public static void addWebView(String key, MyWebView webView) {
         webViewCache.put(key, webView);
     }
 
-    public static WebView getWebView(String key) {
-        WebView webView = webViewCache.get(key);
+    public static MyWebView getWebView(String key) {
+        MyWebView webView = webViewCache.get(key);
         return webView;
     }
 

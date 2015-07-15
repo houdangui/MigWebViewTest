@@ -17,7 +17,7 @@ public class Message {
         this.webViewkey = webViewkey;
     }
 
-    public int getWebViewIndex() {
+    public int getWebViewType() {
         return webViewIndex;
     }
 

@@ -22,12 +22,22 @@ public class MessageViewHolder {
     private Message message;
     private Activity context;
 
+    private WebViewListener listener;
+
     static private final int WEB_VIEW_LOADING_HEIGHT = 400;
+
+    public interface WebViewListener {
+        void onPageFinished(WebView webView);
+    }
 
 
     public MessageViewHolder(View view) {
         container = (RelativeLayout)view.findViewById(R.id.container);
         webViewTitle = (TextView)view.findViewById(R.id.text_embeded_webview);
+    }
+
+    public void setWebViewListener(WebViewListener listener) {
+        this.listener = listener;
     }
 
     public void setContext(Activity context) {
@@ -73,11 +83,13 @@ public class MessageViewHolder {
                     super.onPageFinished(view, url);
                     //int measuredHeight = view.getMeasuredHeight();
                     //int height = view.getHeight();
-                    int scrollRange = ((MyWebView)view).getVerticalScrollRange();
-                    Log.d("WebinList", "WebView:" + message.getWebViewType() +
-                            " scrollRange:" + scrollRange);
-                    view.setTag(R.id.webview_height, scrollRange);
-                    adjustHeight(view, scrollRange);
+                    //int scrollRange = ((MyWebView)view).getVerticalScrollRange();
+                    //Log.d("WebinList", "WebView:" + message.getWebViewType() +
+                    //        " scrollRange:" + scrollRange);
+                    //view.setTag(R.id.webview_height, scrollRange);
+                    //adjustHeight(view, scrollRange);
+
+                    listener.onPageFinished(view);
                 }
             });
 
@@ -113,7 +125,13 @@ public class MessageViewHolder {
             @Override
             public void onClick(View v) {
                 RelativeLayout c = container;
-                c.requestLayout();
+                for (int i = 0 ; i < container.getChildCount(); i++) {
+                    View childView = container.getChildAt(i);
+                    if (childView instanceof MyWebView) {
+                        MyWebView webView = (MyWebView) childView;
+
+                    }
+                }
             }
         });
     }

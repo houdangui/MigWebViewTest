@@ -19,11 +19,16 @@ public class MessageListAdapter extends BaseAdapter {
     private ArrayList<Message> msgDataList = new ArrayList<>();
     private LayoutInflater mInflater;
     private Activity mActivity;
+    private MessageViewHolder.WebViewListener listener;
 
     public MessageListAdapter(Activity activity) {
         super();
         mActivity = activity;
         mInflater = LayoutInflater.from(mActivity);
+    }
+
+    public void setWebViewListener(MessageViewHolder.WebViewListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -58,6 +63,7 @@ public class MessageListAdapter extends BaseAdapter {
         Message msg = (Message)getItem(position);
         viewHolder.setContext(mActivity);
         viewHolder.setData(msg);
+        viewHolder.setWebViewListener(listener);
 
         return convertView;
     }

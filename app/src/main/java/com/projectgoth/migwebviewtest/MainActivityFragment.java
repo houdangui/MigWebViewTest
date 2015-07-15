@@ -1,6 +1,7 @@
 package com.projectgoth.migwebviewtest;
 
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,21 +9,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.webkit.WebView;
 import android.widget.AbsListView;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements AbsListView.RecyclerListener, ViewTreeObserver.OnGlobalLayoutListener {
+public class MainActivityFragment extends Fragment implements AbsListView.RecyclerListener, ViewTreeObserver.OnGlobalLayoutListener, MessageViewHolder.WebViewListener {
 
     private MyListView mMessageList;
     private MessageListAdapter mMessageListAdapter;
     private ArrayList<Message> mDummyMessages;
     static private final int MSG_NUM = 20;
+    private Handler handler = new Handler();
 
     public MainActivityFragment() {
     }
@@ -41,8 +44,10 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         mMessageListAdapter = new MessageListAdapter(getActivity());
         mMessageList.setRecyclerListener(this);
         mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
+        mMessageListAdapter.setWebViewListener(this);
         mMessageList.setAdapter(mMessageListAdapter);
         mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
+
 
     }
 
@@ -50,8 +55,8 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
     private ArrayList<Message> getDummyMessages() {
         if (mDummyMessages == null) {
             mDummyMessages = new ArrayList<>();
-            for (int i=0; i<MSG_NUM; i++) {
-                int index =  new Random().nextInt(WebViewCache.posts.length);
+            for (int i = 0; i < MSG_NUM; i++) {
+                int index = new Random().nextInt(WebViewCache.posts.length);
                 Message msg = new Message();
                 msg.setWebViewIndex(index);
                 msg.setWebViewkey(WebViewCache.posts[index]);
@@ -66,7 +71,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
     private ArrayList<Message> getDummyMsgsWithLessWebView() {
         if (mDummyMessages == null) {
             mDummyMessages = new ArrayList<>();
-            for (int i=0; i<MSG_NUM; i++) {
+            for (int i = 0; i < MSG_NUM; i++) {
                 Message msg = new Message();
                 msg.setMsgIndex(i);
                 msg.setWebViewIndex(-1);
@@ -98,7 +103,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
             return;
         }
         //for testing webview
-        if (tag != null && tag instanceof MessageViewHolder ) {
+        if (tag != null && tag instanceof MessageViewHolder) {
             MessageViewHolder holder = (MessageViewHolder) tag;
             Log.d("WebinList", "onMovedToScrapHeap: view of msg " + holder.getMessage().getMsgIndex());
             String key = holder.getKey();
@@ -112,7 +117,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
             if (webView != null) {
                 Log.d("WebinList", "***** cacheWebView type " + message.getWebViewType());
 
-                int type = (Integer)webView.getTag();
+                int type = (Integer) webView.getTag();
                 String myKey = WebViewCache.posts[type];
                 if (!myKey.equals(key)) {
                     Log.d("WebinList", "!!!!!!!" + "key:" + key + " myKey:" + myKey);
@@ -125,7 +130,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
     private boolean isMessageVisible(Message message) {
         int firstVisiblePos = mMessageList.getFirstVisiblePosition();
         int lastVisiblePos = mMessageList.getLastVisiblePosition();
-        if (message.getMsgIndex() >= firstVisiblePos && message.getMsgIndex() <= lastVisiblePos ) {
+        if (message.getMsgIndex() >= firstVisiblePos && message.getMsgIndex() <= lastVisiblePos) {
             return true;
         }
 
@@ -133,6 +138,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
     }
 
     boolean isLayoutInitialized = false;
+
     @Override
     public void onGlobalLayout() {
         isLayoutInitialized = true;
@@ -147,4 +153,25 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
     public static boolean hasJellyBean() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
+
+    private void adjustWebViewHeight(final MyWebView myWebView) {
+
+        int scrollRange = myWebView.computeVerticalScrollRange();
+        myWebView.setTag(R.id.webview_height, scrollRange);
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) myWebView.getLayoutParams();
+        layoutParams.height = scrollRange;
+        myWebView.setLayoutParams(layoutParams);
+    }
+
+    @Override
+    public void onPageFinished(final WebView webView) {
+        // added a delay otherwise cannot get the scroll range correctly
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adjustWebViewHeight((MyWebView) webView);
+            }
+        }, 1000);
+    }
+
 }

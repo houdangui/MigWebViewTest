@@ -40,7 +40,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         mMessageList = (MyListView) view.findViewById(R.id.message_list);
         mMessageListAdapter = new MessageListAdapter(getActivity());
         mMessageList.setRecyclerListener(this);
-        mMessageListAdapter.setMsgDataList(getDummyMessages());
+        mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
         mMessageList.setAdapter(mMessageListAdapter);
         mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
 

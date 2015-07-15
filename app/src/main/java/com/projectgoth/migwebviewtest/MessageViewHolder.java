@@ -22,7 +22,7 @@ public class MessageViewHolder {
     private Message message;
     private Activity context;
 
-    static private final int WEB_VIEW_FIXED_HEIGHT = 400;
+    static private final int WEB_VIEW_LOADING_HEIGHT = 400;
 
 
     public MessageViewHolder(View view) {
@@ -51,16 +51,11 @@ public class MessageViewHolder {
         if (cachedWebView == null) {
             removeWebViewInChild(container);
 
-            //create layout params
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, WEB_VIEW_FIXED_HEIGHT);
-            layoutParams.addRule(RelativeLayout.BELOW, R.id.text_embeded_webview);
-
             Log.d("WebinList", "----- new web view & load");
             webView = new MyWebView(context);
 
             //Log.d("WebinList", "----- before adding " + logChildrenViews);
-            container.addView(webView, layoutParams);
+            container.addView(webView, getWebViewLayoutParam(WEB_VIEW_LOADING_HEIGHT));
             String logChildrenViews = getChildViewNames(container);
             //Log.d("WebinList", "----- after adding " + logChildrenViews);
 
@@ -81,6 +76,8 @@ public class MessageViewHolder {
                     int scrollRange = ((MyWebView)view).getVerticalScrollRange();
                     Log.d("WebinList", "WebView:" + message.getWebViewType() +
                             " scrollRange:" + scrollRange);
+                    view.setTag(R.id.webview_height, scrollRange);
+                    adjustHeight(view, scrollRange);
                 }
             });
 
@@ -88,12 +85,7 @@ public class MessageViewHolder {
 
             webView = cachedWebView;
             removeWebViewInChild(container);
-            cachedWebView.setWebViewClient(null);
 
-            //create layout params
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, WEB_VIEW_FIXED_HEIGHT);
-            layoutParams.addRule(RelativeLayout.BELOW, R.id.text_embeded_webview);
             //remove parent view of cached webview
             RelativeLayout parentView = (RelativeLayout)cachedWebView.getParent();
             if (parentView != null) {
@@ -104,7 +96,13 @@ public class MessageViewHolder {
             }
             //add cached webview
             Log.d("WebinList", "----- add cached web view: " + cachedWebView.getTag());
-            container.addView(cachedWebView, layoutParams);
+            int height;
+            if (webView.getTag(R.id.webview_height) == null) {
+                height = WEB_VIEW_LOADING_HEIGHT;
+            } else {
+                height = (Integer) webView.getTag(R.id.webview_height);
+            }
+            container.addView(cachedWebView, getWebViewLayoutParam(height));
             String logChildrenViews = getChildViewNames(container);
             //Log.d("WebinList", "----- after adding " + logChildrenViews);
 
@@ -160,6 +158,24 @@ public class MessageViewHolder {
 
     public Message getMessage() {
         return message;
+    }
+
+    private RelativeLayout.LayoutParams getWebViewLayoutParam(int height) {
+        // must use a fixed height.  if using wrap_content height, it causes problem that when the
+        //webview height changes in the listView, the onMeasure of ListView called which calls the
+        // getView and onMovedToScrapHeap for all the items on first page
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, height);
+        layoutParams.addRule(RelativeLayout.BELOW, R.id.text_embeded_webview);
+
+        return layoutParams;
+    }
+
+    private void adjustHeight(WebView webView, int height) {
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) webView.getLayoutParams();
+        layoutParams.height = height;
+        webView.setLayoutParams(layoutParams);
+
     }
 
 }

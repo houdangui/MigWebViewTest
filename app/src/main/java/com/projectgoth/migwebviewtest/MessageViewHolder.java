@@ -86,6 +86,7 @@ public class MessageViewHolder {
 
         } else {
 
+            webView = cachedWebView;
             removeWebViewInChild(container);
             cachedWebView.setWebViewClient(null);
 

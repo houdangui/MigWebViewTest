@@ -2,6 +2,7 @@ package com.projectgoth.migwebviewtest;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +64,7 @@ public class MessageViewHolder {
 
             Log.d("WebinList", "----- new web view & load");
             webView = new MyWebView(context);
+            if (Build.VERSION.SDK_INT >= 11) webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
             //Log.d("WebinList", "----- before adding " + logChildrenViews);
             container.addView(webView, getWebViewLayoutParam(WEB_VIEW_LOADING_HEIGHT));
@@ -101,19 +103,14 @@ public class MessageViewHolder {
             //remove parent view of cached webview
             RelativeLayout parentView = (RelativeLayout)cachedWebView.getParent();
             if (parentView != null) {
-                MessageViewHolder holder = (MessageViewHolder) parentView.getTag(R.id.holder);
+                MessageViewHolder holder = (MessageViewHolder) parentView.getTag();
                 Message message = holder.getMessage();
                 Log.d("WebinList", "**** remove webview type:" + message.getWebViewType() + " from msg:" + message.getMsgIndex());
                 parentView.removeView(cachedWebView);
             }
             //add cached webview
             Log.d("WebinList", "----- add cached web view: " + cachedWebView.getTag());
-            int height;
-            if (webView.getTag(R.id.webview_height) == null) {
-                height = WEB_VIEW_LOADING_HEIGHT;
-            } else {
-                height = (Integer) webView.getTag(R.id.webview_height);
-            }
+            int height = webView.displayHeight == 0 ? WEB_VIEW_LOADING_HEIGHT : webView.displayHeight;
             container.addView(cachedWebView, getWebViewLayoutParam(height));
             String logChildrenViews = getChildViewNames(container);
             //Log.d("WebinList", "----- after adding " + logChildrenViews);
@@ -152,7 +149,7 @@ public class MessageViewHolder {
         for (int i = 0; i < container.getChildCount(); i++) {
             View childView = container.getChildAt(i);
             if(childView instanceof MyWebView) {
-                MessageViewHolder holder = (MessageViewHolder) container.getTag(R.id.holder);
+                MessageViewHolder holder = (MessageViewHolder) container.getTag();
                 Message message = holder.getMessage();
                 //Log.d("WebinList", "**** remove webview type:" + message.getWebViewType() + " from msg:" + message.getMsgIndex());
                 container.removeView(childView);

@@ -53,9 +53,9 @@ public class MessageListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.holder_message_item, null);
             viewHolder = new MessageViewHolder(convertView);
-            convertView.setTag(R.id.holder, viewHolder);
+            convertView.setTag(viewHolder);
         } else {
-            viewHolder = (MessageViewHolder)convertView.getTag(R.id.holder);
+            viewHolder = (MessageViewHolder) convertView.getTag();
         }
 
         Log.d("WebinList", "MessageListAdapter.getView pos:" + position);

@@ -43,7 +43,8 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         mMessageList = (MyListView) view.findViewById(R.id.message_list);
         mMessageListAdapter = new MessageListAdapter(getActivity());
         mMessageList.setRecyclerListener(this);
-        mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
+        mMessageListAdapter.setMsgDataList(getDummyMessages());
+//        mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
         mMessageListAdapter.setWebViewListener(this);
         mMessageList.setAdapter(mMessageListAdapter);
         mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
@@ -96,7 +97,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
 
     @Override
     public void onMovedToScrapHeap(View view) {
-        Object tag = view.getTag(R.id.holder);
+        Object tag = view.getTag();
         //Log.d("WebinList", "onMovedToScrapHeap");
 
         if (!isLayoutInitialized) {
@@ -157,7 +158,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
     private void adjustWebViewHeight(final MyWebView myWebView) {
 
         int scrollRange = myWebView.computeVerticalScrollRange();
-        myWebView.setTag(R.id.webview_height, scrollRange);
+        myWebView.displayHeight = scrollRange;
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) myWebView.getLayoutParams();
         layoutParams.height = scrollRange;
         myWebView.setLayoutParams(layoutParams);

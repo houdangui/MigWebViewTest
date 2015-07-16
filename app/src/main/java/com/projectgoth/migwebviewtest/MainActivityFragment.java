@@ -145,9 +145,9 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         isLayoutInitialized = true;
 
         if (hasJellyBean()) {
-            mMessageList.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-        } else {
             mMessageList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        } else {
+            mMessageList.getViewTreeObserver().removeGlobalOnLayoutListener(this);
         }
     }
 

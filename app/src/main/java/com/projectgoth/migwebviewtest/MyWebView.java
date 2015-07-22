@@ -11,6 +11,8 @@ import android.webkit.WebView;
 public class MyWebView extends WebView {
 
     public int displayHeight = 0;
+    public long startLoadingTime;
+    public long finishLoadingTime;
 
     public MyWebView(Context context) {
         super(context);
@@ -22,6 +24,26 @@ public class MyWebView extends WebView {
 
     public MyWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public long getLoadingTime() {
+        return finishLoadingTime - startLoadingTime;
+    }
+
+    public long getStartLoadingTime() {
+        return startLoadingTime;
+    }
+
+    public void setStartLoadingTime(long startLoadingTime) {
+        this.startLoadingTime = startLoadingTime;
+    }
+
+    public long getFinishLoadingTime() {
+        return finishLoadingTime;
+    }
+
+    public void setFinishLoadingTime(long finishLoadingTime) {
+        this.finishLoadingTime = finishLoadingTime;
     }
 
     @Override

@@ -1,11 +1,13 @@
 package com.projectgoth.migwebviewtest;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
@@ -79,7 +81,19 @@ public class MessageViewHolder {
             webView.setBackgroundColor(Color.YELLOW);
             webView.setTag(message.getWebViewType());
 
+            //webView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+            //webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+
             webView.setWebViewClient(new WebViewClient(){
+
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    super.onPageStarted(view, url, favicon);
+
+                    MyWebView myWebView = (MyWebView) view;
+                    myWebView.setStartLoadingTime(System.currentTimeMillis());
+
+                }
+
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
@@ -89,7 +103,13 @@ public class MessageViewHolder {
                     //Log.d("WebinList", "WebView:" + message.getWebViewType() +
                     //        " scrollRange:" + scrollRange);
                     //view.setTag(R.id.webview_height, scrollRange);
+
                     //adjustHeight(view, scrollRange);
+
+                    MyWebView myWebView = (MyWebView) view;
+                    myWebView.setFinishLoadingTime(System.currentTimeMillis());
+
+                    Log.d("WebinList", "WebView:" + myWebView.getTag() + " LoadingTime:" + myWebView.getLoadingTime());
 
                     listener.onPageFinished(view);
                 }

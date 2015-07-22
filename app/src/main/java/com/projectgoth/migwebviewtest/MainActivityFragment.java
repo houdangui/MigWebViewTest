@@ -43,8 +43,8 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         mMessageList = (MyListView) view.findViewById(R.id.message_list);
         mMessageListAdapter = new MessageListAdapter(getActivity());
         mMessageList.setRecyclerListener(this);
-        mMessageListAdapter.setMsgDataList(getDummyMessages());
-//        mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
+        mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
+        //mMessageListAdapter.setMsgDataList(getDummyMessages());
         mMessageListAdapter.setWebViewListener(this);
         mMessageList.setAdapter(mMessageListAdapter);
         mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
@@ -82,13 +82,29 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
 
             int webViewIndex = 0;
 
-            //Message msg1 = mDummyMessages.get(1);
-            //msg1.setWebViewIndex(webViewIndex);
-            //msg1.setWebViewkey(WebViewCache.posts[webViewIndex]);
+            Message msg0 = mDummyMessages.get(0);
+            msg0.setWebViewIndex(webViewIndex);
+            msg0.setWebViewkey(WebViewCache.posts[webViewIndex]);
 
-            Message msg10 = mDummyMessages.get(10);
-            msg10.setWebViewIndex(webViewIndex);
-            msg10.setWebViewkey(WebViewCache.posts[webViewIndex]);
+            webViewIndex = 1;
+            Message msg1 = mDummyMessages.get(1);
+            msg1.setWebViewIndex(webViewIndex);
+            msg1.setWebViewkey(WebViewCache.posts[webViewIndex]);
+
+            webViewIndex = 2;
+            Message msg2 = mDummyMessages.get(2);
+            msg2.setWebViewIndex(webViewIndex);
+            msg2.setWebViewkey(WebViewCache.posts[webViewIndex]);
+
+            webViewIndex = 3;
+            Message msg3 = mDummyMessages.get(3);
+            msg3.setWebViewIndex(webViewIndex);
+            msg3.setWebViewkey(WebViewCache.posts[webViewIndex]);
+
+            webViewIndex = 4;
+            Message msg4 = mDummyMessages.get(4);
+            msg4.setWebViewIndex(webViewIndex);
+            msg4.setWebViewkey(WebViewCache.posts[webViewIndex]);
 
         }
 
@@ -162,6 +178,8 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) myWebView.getLayoutParams();
         layoutParams.height = scrollRange;
         myWebView.setLayoutParams(layoutParams);
+
+        Log.d("WebinList", "displayHeight:" + scrollRange);
     }
 
     @Override

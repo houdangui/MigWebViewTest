@@ -27,8 +27,6 @@ public class MessageViewHolder {
 
     private WebViewListener listener;
 
-    static private final int WEB_VIEW_LOADING_HEIGHT = 400;
-
     public interface WebViewListener {
         void onPageFinished(WebView webView);
     }
@@ -69,7 +67,7 @@ public class MessageViewHolder {
             if (Build.VERSION.SDK_INT >= 11) webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
             //Log.d("WebinList", "----- before adding " + logChildrenViews);
-            container.addView(webView, getWebViewLayoutParam(WEB_VIEW_LOADING_HEIGHT));
+            container.addView(webView, getWebViewLayoutParam(MyWebView.WEB_VIEW_LOADING_HEIGHT));
             String logChildrenViews = getChildViewNames(container);
             //Log.d("WebinList", "----- after adding " + logChildrenViews);
 
@@ -130,7 +128,7 @@ public class MessageViewHolder {
             }
             //add cached webview
             Log.d("WebinList", "----- add cached web view: " + cachedWebView.getTag());
-            int height = webView.displayHeight == 0 ? WEB_VIEW_LOADING_HEIGHT : webView.displayHeight;
+            int height = webView.displayHeight == 0 ? MyWebView.WEB_VIEW_LOADING_HEIGHT : webView.displayHeight;
             container.addView(cachedWebView, getWebViewLayoutParam(height));
             String logChildrenViews = getChildViewNames(container);
             //Log.d("WebinList", "----- after adding " + logChildrenViews);

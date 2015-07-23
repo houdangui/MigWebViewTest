@@ -11,11 +11,8 @@ import android.webkit.WebView;
  */
 public class MyWebView extends WebView {
 
-    public int displayHeight = 0;
     public long startLoadingTime;
     public long finishLoadingTime;
-
-    static public final int WEB_VIEW_LOADING_HEIGHT = dpToPx(200);
 
     public MyWebView(Context context) {
         super(context);

@@ -19,7 +19,7 @@ import java.util.Random;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements AbsListView.RecyclerListener, ViewTreeObserver.OnGlobalLayoutListener, MessageViewHolder.WebViewListener {
+public class MainActivityFragment extends Fragment implements AbsListView.RecyclerListener, ViewTreeObserver.OnGlobalLayoutListener {
 
     private MyListView mMessageList;
     private MessageListAdapter mMessageListAdapter;
@@ -43,9 +43,8 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         mMessageList = (MyListView) view.findViewById(R.id.message_list);
         mMessageListAdapter = new MessageListAdapter(getActivity());
         mMessageList.setRecyclerListener(this);
-        mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
+        mMessageListAdapter.setMsgDataList(getDummyMessages());
         //mMessageListAdapter.setMsgDataList(getDummyMessages());
-        mMessageListAdapter.setWebViewListener(this);
         mMessageList.setAdapter(mMessageListAdapter);
         mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
@@ -169,28 +168,6 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
 
     public static boolean hasJellyBean() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    }
-
-    private void adjustWebViewHeight(final MyWebView myWebView) {
-
-        int scrollRange = myWebView.computeVerticalScrollRange();
-        myWebView.displayHeight = scrollRange;
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) myWebView.getLayoutParams();
-        layoutParams.height = scrollRange;
-        myWebView.setLayoutParams(layoutParams);
-
-        Log.d("WebinList", "displayHeight:" + scrollRange);
-    }
-
-    @Override
-    public void onPageFinished(final WebView webView) {
-        // added a delay otherwise cannot get the scroll range correctly
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                adjustWebViewHeight((MyWebView) webView);
-            }
-        }, 1000);
     }
 
 }

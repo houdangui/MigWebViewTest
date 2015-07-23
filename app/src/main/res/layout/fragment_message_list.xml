@@ -8,6 +8,6 @@
     <com.projectgoth.migwebviewtest.MyListView
         android:id="@+id/message_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></com.projectgoth.migwebviewtest.MyListView>
+        android:layout_height="match_parent"></com.projectgoth.migwebviewtest.MyListView>
 
 </RelativeLayout>

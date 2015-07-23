@@ -88,4 +88,9 @@ public class MyWebView extends WebView {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 
+    @Override
+    public void requestLayout() {
+        super.requestLayout();
+    }
+
 }

@@ -144,6 +144,7 @@ public class MessageViewHolder {
                     View childView = container.getChildAt(i);
                     if (childView instanceof MyWebView) {
                         MyWebView webView = (MyWebView) childView;
+                        //webView.requestLayout();
 
                     }
                 }

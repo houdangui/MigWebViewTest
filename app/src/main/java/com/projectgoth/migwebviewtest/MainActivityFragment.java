@@ -82,7 +82,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
 
             int webViewIndex = 0;
 
-            Message msg0 = mDummyMessages.get(0);
+            /*Message msg0 = mDummyMessages.get(0);
             msg0.setWebViewIndex(webViewIndex);
             msg0.setWebViewkey(WebViewCache.posts[webViewIndex]);
 
@@ -99,12 +99,12 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
             webViewIndex = 3;
             Message msg3 = mDummyMessages.get(3);
             msg3.setWebViewIndex(webViewIndex);
-            msg3.setWebViewkey(WebViewCache.posts[webViewIndex]);
+            msg3.setWebViewkey(WebViewCache.posts[webViewIndex]);*/
 
             webViewIndex = 4;
-            Message msg4 = mDummyMessages.get(4);
-            msg4.setWebViewIndex(webViewIndex);
-            msg4.setWebViewkey(WebViewCache.posts[webViewIndex]);
+            Message msg10 = mDummyMessages.get(10);
+            msg10.setWebViewIndex(webViewIndex);
+            msg10.setWebViewkey(WebViewCache.posts[webViewIndex]);
 
         }
 

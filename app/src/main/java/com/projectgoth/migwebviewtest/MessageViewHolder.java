@@ -1,10 +1,13 @@
 package com.projectgoth.migwebviewtest;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
@@ -22,22 +25,10 @@ public class MessageViewHolder {
     private Message message;
     private Activity context;
 
-    private WebViewListener listener;
-
-    static private final int WEB_VIEW_LOADING_HEIGHT = 400;
-
-    public interface WebViewListener {
-        void onPageFinished(WebView webView);
-    }
-
 
     public MessageViewHolder(View view) {
         container = (RelativeLayout)view.findViewById(R.id.container);
         webViewTitle = (TextView)view.findViewById(R.id.text_embeded_webview);
-    }
-
-    public void setWebViewListener(WebViewListener listener) {
-        this.listener = listener;
     }
 
     public void setContext(Activity context) {
@@ -63,9 +54,10 @@ public class MessageViewHolder {
 
             Log.d("WebinList", "----- new web view & load");
             webView = new MyWebView(context);
+            if (Build.VERSION.SDK_INT >= 11) webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
             //Log.d("WebinList", "----- before adding " + logChildrenViews);
-            container.addView(webView, getWebViewLayoutParam(WEB_VIEW_LOADING_HEIGHT));
+            container.addView(webView, getWebViewLayoutParam());
             String logChildrenViews = getChildViewNames(container);
             //Log.d("WebinList", "----- after adding " + logChildrenViews);
 
@@ -77,7 +69,19 @@ public class MessageViewHolder {
             webView.setBackgroundColor(Color.YELLOW);
             webView.setTag(message.getWebViewType());
 
+            //webView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+            //webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+
             webView.setWebViewClient(new WebViewClient(){
+
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    super.onPageStarted(view, url, favicon);
+
+                    MyWebView myWebView = (MyWebView) view;
+                    myWebView.setStartLoadingTime(System.currentTimeMillis());
+
+                }
+
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
@@ -87,9 +91,13 @@ public class MessageViewHolder {
                     //Log.d("WebinList", "WebView:" + message.getWebViewType() +
                     //        " scrollRange:" + scrollRange);
                     //view.setTag(R.id.webview_height, scrollRange);
+
                     //adjustHeight(view, scrollRange);
 
-                    listener.onPageFinished(view);
+                    MyWebView myWebView = (MyWebView) view;
+                    myWebView.setFinishLoadingTime(System.currentTimeMillis());
+
+                    Log.d("WebinList", "WebView:" + myWebView.getTag() + " LoadingTime:" + myWebView.getLoadingTime());
                 }
             });
 
@@ -101,20 +109,14 @@ public class MessageViewHolder {
             //remove parent view of cached webview
             RelativeLayout parentView = (RelativeLayout)cachedWebView.getParent();
             if (parentView != null) {
-                MessageViewHolder holder = (MessageViewHolder) parentView.getTag(R.id.holder);
+                MessageViewHolder holder = (MessageViewHolder) parentView.getTag();
                 Message message = holder.getMessage();
                 Log.d("WebinList", "**** remove webview type:" + message.getWebViewType() + " from msg:" + message.getMsgIndex());
                 parentView.removeView(cachedWebView);
             }
             //add cached webview
             Log.d("WebinList", "----- add cached web view: " + cachedWebView.getTag());
-            int height;
-            if (webView.getTag(R.id.webview_height) == null) {
-                height = WEB_VIEW_LOADING_HEIGHT;
-            } else {
-                height = (Integer) webView.getTag(R.id.webview_height);
-            }
-            container.addView(cachedWebView, getWebViewLayoutParam(height));
+            container.addView(cachedWebView, getWebViewLayoutParam());
             String logChildrenViews = getChildViewNames(container);
             //Log.d("WebinList", "----- after adding " + logChildrenViews);
 
@@ -129,6 +131,7 @@ public class MessageViewHolder {
                     View childView = container.getChildAt(i);
                     if (childView instanceof MyWebView) {
                         MyWebView webView = (MyWebView) childView;
+                        //webView.requestLayout();
 
                     }
                 }
@@ -152,7 +155,7 @@ public class MessageViewHolder {
         for (int i = 0; i < container.getChildCount(); i++) {
             View childView = container.getChildAt(i);
             if(childView instanceof MyWebView) {
-                MessageViewHolder holder = (MessageViewHolder) container.getTag(R.id.holder);
+                MessageViewHolder holder = (MessageViewHolder) container.getTag();
                 Message message = holder.getMessage();
                 //Log.d("WebinList", "**** remove webview type:" + message.getWebViewType() + " from msg:" + message.getMsgIndex());
                 container.removeView(childView);
@@ -178,12 +181,9 @@ public class MessageViewHolder {
         return message;
     }
 
-    private RelativeLayout.LayoutParams getWebViewLayoutParam(int height) {
-        // must use a fixed height.  if using wrap_content height, it causes problem that when the
-        //webview height changes in the listView, the onMeasure of ListView called which calls the
-        // getView and onMovedToScrapHeap for all the items on first page
+    private RelativeLayout.LayoutParams getWebViewLayoutParam() {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, height);
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.BELOW, R.id.text_embeded_webview);
 
         return layoutParams;

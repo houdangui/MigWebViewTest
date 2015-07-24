@@ -27,7 +27,7 @@ public class WebViewCache {
                     "<script async src=\"//platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>"
     };
 
-    private static final int MAX_CACHE_SIZE = 10;
+    private static final int MAX_CACHE_SIZE = 4;
 
     private static LruCache<String, MyWebView> webViewCache = new LruCache<String, MyWebView>(MAX_CACHE_SIZE);
 

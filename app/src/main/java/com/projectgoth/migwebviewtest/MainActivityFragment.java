@@ -19,7 +19,7 @@ import java.util.Random;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements AbsListView.RecyclerListener, ViewTreeObserver.OnGlobalLayoutListener, MessageViewHolder.WebViewListener {
+public class MainActivityFragment extends Fragment implements AbsListView.RecyclerListener, ViewTreeObserver.OnGlobalLayoutListener {
 
     private MyListView mMessageList;
     private MessageListAdapter mMessageListAdapter;
@@ -43,8 +43,8 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         mMessageList = (MyListView) view.findViewById(R.id.message_list);
         mMessageListAdapter = new MessageListAdapter(getActivity());
         mMessageList.setRecyclerListener(this);
-        mMessageListAdapter.setMsgDataList(getDummyMsgsWithLessWebView());
-        mMessageListAdapter.setWebViewListener(this);
+        mMessageListAdapter.setMsgDataList(getDummyMessages());
+        //mMessageListAdapter.setMsgDataList(getDummyMessages());
         mMessageList.setAdapter(mMessageListAdapter);
         mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
@@ -81,10 +81,26 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
 
             int webViewIndex = 0;
 
-            //Message msg1 = mDummyMessages.get(1);
-            //msg1.setWebViewIndex(webViewIndex);
-            //msg1.setWebViewkey(WebViewCache.posts[webViewIndex]);
+            /*Message msg0 = mDummyMessages.get(0);
+            msg0.setWebViewIndex(webViewIndex);
+            msg0.setWebViewkey(WebViewCache.posts[webViewIndex]);
 
+            webViewIndex = 1;
+            Message msg1 = mDummyMessages.get(1);
+            msg1.setWebViewIndex(webViewIndex);
+            msg1.setWebViewkey(WebViewCache.posts[webViewIndex]);
+
+            webViewIndex = 2;
+            Message msg2 = mDummyMessages.get(2);
+            msg2.setWebViewIndex(webViewIndex);
+            msg2.setWebViewkey(WebViewCache.posts[webViewIndex]);
+
+            webViewIndex = 3;
+            Message msg3 = mDummyMessages.get(3);
+            msg3.setWebViewIndex(webViewIndex);
+            msg3.setWebViewkey(WebViewCache.posts[webViewIndex]);*/
+
+            webViewIndex = 4;
             Message msg10 = mDummyMessages.get(10);
             msg10.setWebViewIndex(webViewIndex);
             msg10.setWebViewkey(WebViewCache.posts[webViewIndex]);
@@ -96,7 +112,7 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
 
     @Override
     public void onMovedToScrapHeap(View view) {
-        Object tag = view.getTag(R.id.holder);
+        Object tag = view.getTag();
         //Log.d("WebinList", "onMovedToScrapHeap");
 
         if (!isLayoutInitialized) {
@@ -144,34 +160,14 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         isLayoutInitialized = true;
 
         if (hasJellyBean()) {
-            mMessageList.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-        } else {
             mMessageList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        } else {
+            mMessageList.getViewTreeObserver().removeGlobalOnLayoutListener(this);
         }
     }
 
     public static boolean hasJellyBean() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    }
-
-    private void adjustWebViewHeight(final MyWebView myWebView) {
-
-        int scrollRange = myWebView.computeVerticalScrollRange();
-        myWebView.setTag(R.id.webview_height, scrollRange);
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) myWebView.getLayoutParams();
-        layoutParams.height = scrollRange;
-        myWebView.setLayoutParams(layoutParams);
-    }
-
-    @Override
-    public void onPageFinished(final WebView webView) {
-        // added a delay otherwise cannot get the scroll range correctly
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                adjustWebViewHeight((MyWebView) webView);
-            }
-        }, 1000);
     }
 
 }

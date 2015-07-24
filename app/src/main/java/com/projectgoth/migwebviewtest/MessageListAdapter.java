@@ -19,16 +19,11 @@ public class MessageListAdapter extends BaseAdapter {
     private ArrayList<Message> msgDataList = new ArrayList<>();
     private LayoutInflater mInflater;
     private Activity mActivity;
-    private MessageViewHolder.WebViewListener listener;
 
     public MessageListAdapter(Activity activity) {
         super();
         mActivity = activity;
         mInflater = LayoutInflater.from(mActivity);
-    }
-
-    public void setWebViewListener(MessageViewHolder.WebViewListener listener) {
-        this.listener = listener;
     }
 
     @Override
@@ -53,9 +48,9 @@ public class MessageListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.holder_message_item, null);
             viewHolder = new MessageViewHolder(convertView);
-            convertView.setTag(R.id.holder, viewHolder);
+            convertView.setTag(viewHolder);
         } else {
-            viewHolder = (MessageViewHolder)convertView.getTag(R.id.holder);
+            viewHolder = (MessageViewHolder) convertView.getTag();
         }
 
         Log.d("WebinList", "MessageListAdapter.getView pos:" + position);
@@ -63,7 +58,6 @@ public class MessageListAdapter extends BaseAdapter {
         Message msg = (Message)getItem(position);
         viewHolder.setContext(mActivity);
         viewHolder.setData(msg);
-        viewHolder.setWebViewListener(listener);
 
         return convertView;
     }

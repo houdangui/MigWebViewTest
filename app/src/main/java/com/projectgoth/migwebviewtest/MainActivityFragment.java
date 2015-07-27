@@ -19,7 +19,7 @@ import java.util.Random;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements AbsListView.RecyclerListener, ViewTreeObserver.OnGlobalLayoutListener {
+public class MainActivityFragment extends Fragment implements AbsListView.RecyclerListener {
 
     private MyListView mMessageList;
     private MessageListAdapter mMessageListAdapter;
@@ -46,8 +46,6 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         mMessageListAdapter.setMsgDataList(getDummyMessages());
         //mMessageListAdapter.setMsgDataList(getDummyMessages());
         mMessageList.setAdapter(mMessageListAdapter);
-        mMessageList.getViewTreeObserver().addOnGlobalLayoutListener(this);
-
 
     }
 
@@ -115,9 +113,6 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         Object tag = view.getTag();
         //Log.d("WebinList", "onMovedToScrapHeap");
 
-        if (!isLayoutInitialized) {
-            return;
-        }
         //for testing webview
         if (tag != null && tag instanceof MessageViewHolder) {
             MessageViewHolder holder = (MessageViewHolder) tag;
@@ -151,23 +146,6 @@ public class MainActivityFragment extends Fragment implements AbsListView.Recycl
         }
 
         return false;
-    }
-
-    boolean isLayoutInitialized = false;
-
-    @Override
-    public void onGlobalLayout() {
-        isLayoutInitialized = true;
-
-        if (hasJellyBean()) {
-            mMessageList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-        } else {
-            mMessageList.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-        }
-    }
-
-    public static boolean hasJellyBean() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
 }

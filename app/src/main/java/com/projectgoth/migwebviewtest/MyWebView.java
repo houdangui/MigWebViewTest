@@ -68,19 +68,6 @@ public class MyWebView extends WebView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    @Override
-    protected int computeVerticalScrollRange() {
-        int webViewType =  (Integer)getTag();
-        int range = super.computeVerticalScrollRange();
-        Log.d("WebinList", "MyWebView type:" + webViewType + " computeVerticalScrollRange-" +
-                range);
-        return range;
-    }
-
-    public int getVerticalScrollRange() {
-        return  computeVerticalScrollRange();
-    }
-
     public static int dpToPx(int dp)  {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
